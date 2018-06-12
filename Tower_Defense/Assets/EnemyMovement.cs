@@ -4,19 +4,17 @@ using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
-    //[SerializeField] List<Block> path;
+    [SerializeField] List<Waypoint> path;
 
     void Start ()
     {
 
-        StartCoroutine(FollowPath());
         
     }
 
     IEnumerator FollowPath()
     {
-        EnemyPath path = GetComponent<EnemyPath>();
-        foreach (Cube wayPoint in path.enemyPath)
+        foreach (Waypoint wayPoint in path)
         {
             transform.position = wayPoint.transform.position;
             print(wayPoint.name);

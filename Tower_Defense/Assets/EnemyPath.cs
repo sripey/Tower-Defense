@@ -6,7 +6,7 @@ public class EnemyPath : MonoBehaviour
 {
 
     
-    [SerializeField] public List<Cube> enemyPath;
+    //[SerializeField] public List<Cube> enemyPath;
 
     void Start()
     {
@@ -19,7 +19,7 @@ public class EnemyPath : MonoBehaviour
 
     }
 
-    public void AddToEnemyPath(Cube cube)
+    /*public void AddToEnemyPath(Cube cube)
     {
         if (!enemyPath.Contains(cube))
         {
@@ -30,5 +30,5 @@ public class EnemyPath : MonoBehaviour
         {
 
         }
-    }
+    }*/
 }
