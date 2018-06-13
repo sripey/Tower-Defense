@@ -2,22 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
+
+
 public class EnemyMovement : MonoBehaviour
 {
-    [SerializeField] List<Waypoint> path;
-
     void Start ()
     {
-
-        
+        Pathfinder pathfinder = FindObjectOfType<Pathfinder>();
+        var path = pathfinder.GetPath();
+        StartCoroutine(FollowPath(path));
     }
 
-    IEnumerator FollowPath()
+    public IEnumerator FollowPath(List<Waypoint> path)
     {
         foreach (Waypoint wayPoint in path)
         {
             transform.position = wayPoint.transform.position;
-            print(wayPoint.name);
             yield return new WaitForSeconds(1f);
         }
     }

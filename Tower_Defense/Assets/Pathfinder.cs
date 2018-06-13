@@ -8,6 +8,10 @@ public class Pathfinder : MonoBehaviour
     [SerializeField] Waypoint startWaypoint, endWaypoint;
 
     Dictionary<Vector2Int, Waypoint> grid = new Dictionary<Vector2Int, Waypoint>();
+    Queue<Waypoint> pathQueue = new Queue<Waypoint>();
+    Waypoint searchCenter;
+    List<Waypoint> path = new List<Waypoint>();
+
     Vector2Int[] directions =
     {
         Vector2Int.up,
@@ -16,30 +20,88 @@ public class Pathfinder : MonoBehaviour
         Vector2Int.left
     };
 
+    bool isRunning = true;
 
-    void Start ()
+    public List<Waypoint> GetPath()
     {
         LoadBlocks();
         ColorStartAndEnd();
-        ExporeNeighborBlocks(startWaypoint);
+        BreadthFirstSearch();
+        CreatePath();
+        return path;
     }
 
-    private void ExporeNeighborBlocks(Waypoint waypoint)
+
+    private void CreatePath()
     {
+        path.Add(endWaypoint);
+        Waypoint previous = endWaypoint.exploredFrom;
+
+        while (previous != startWaypoint)
+        {
+            path.Add(previous);
+            previous = previous.exploredFrom;
+        }
+
+        path.Add(startWaypoint);
+        path.Reverse();
+    }
+
+
+    private void BreadthFirstSearch()
+    {
+        pathQueue.Enqueue(startWaypoint);
+
+        while (pathQueue.Count > 0 && isRunning)
+        {
+            searchCenter = pathQueue.Dequeue();
+            HaltIfEndFound();
+            ExporeNeighborBlocks();
+            searchCenter.isExplored = true;
+        }
+    }
+
+
+    private void HaltIfEndFound()
+    {
+        if(searchCenter == endWaypoint)
+
+            {
+            isRunning = false;
+            }
+    }
+
+
+    private void ExporeNeighborBlocks()
+    {
+        if (!isRunning) { return; }
+
         foreach (var direction in directions)
         {
-            Vector2Int neighborCoordinates = waypoint.GetGridPos() + direction;
+            Vector2Int neighborCoordinates = searchCenter.GetGridPos() + direction;
 
             bool blockIsInWorld = grid.ContainsKey(neighborCoordinates);
             if (blockIsInWorld)
             {
-                print("Exploring..." + neighborCoordinates);
-                grid[neighborCoordinates].SetTopColor(Color.yellow);
+                QueueNewNeighbors(neighborCoordinates);
             }
             else
             {
-                print(neighborCoordinates + "...is not in world.");
             }
+        }
+    }
+
+    private void QueueNewNeighbors(Vector2Int neighborCoordinates)
+    {
+        Waypoint neighbor = grid[neighborCoordinates];
+        if (neighbor.isExplored || pathQueue.Contains(neighbor))
+        {
+        }
+        else
+        {
+            pathQueue.Enqueue(neighbor);
+            neighbor.exploredFrom = searchCenter;
+            //neighbor.isExplored = true;
         }
     }
 
@@ -49,10 +111,6 @@ public class Pathfinder : MonoBehaviour
         endWaypoint.SetTopColor(Color.red);
     }
 
-    void Update ()
-    {
-        
-    }
 
     private void LoadBlocks()
     {
@@ -68,12 +126,9 @@ public class Pathfinder : MonoBehaviour
             else
             {
                 grid.Add(waypoint.GetGridPos(), waypoint);
-                
             }
-
         }
         
         print("Loaded " + grid.Count + " blocks");
-
     }
 }

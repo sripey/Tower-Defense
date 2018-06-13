@@ -14,7 +14,6 @@ public class CubeEditor : MonoBehaviour
     private void Awake()
     {
         waypoint = GetComponent<Waypoint>();
-
     }
    
     void Update ()
@@ -25,7 +24,6 @@ public class CubeEditor : MonoBehaviour
 
     private void SnapToGrid()
     {
-
         int gridSize = waypoint.GetGridsize();
         transform.position = new Vector3(
             waypoint.GetGridPos().x * gridSize, 
@@ -37,7 +35,6 @@ public class CubeEditor : MonoBehaviour
     private void UpdateLabel()
     {
         TextMesh textMesh = GetComponentInChildren<TextMesh>();
-        int gridSize = waypoint.GetGridsize();
         string labelText = waypoint.GetGridPos().x +"," + waypoint.GetGridPos().y;
         textMesh.text = labelText;
         gameObject.name = labelText;
